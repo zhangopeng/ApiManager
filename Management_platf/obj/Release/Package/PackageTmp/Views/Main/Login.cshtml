@@ -1,0 +1,162 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>后台登录页面</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- bootstrap 3.0.2 -->
+    <link href="/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- font Awesome -->
+    <link href="/Content/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons -->
+    <link href="/Content/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <!-- Morris chart -->
+    <link href="/Content/morris/morris.css" rel="stylesheet" type="text/css" />
+    <!-- jvectormap -->
+    <link href="/Content/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+    <!-- Date Picker -->
+    <link href="/Content/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
+    <!-- fullCalendar -->
+    <!-- <link href="css/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" /> -->
+    <!-- Daterange picker -->
+    <link href="/Content/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link href="/Content/iCheck/all.css" rel="stylesheet" type="text/css" />
+    <!-- bootstrap wysihtml5 - text editor -->
+    <!-- <link href="css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" /> -->
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <!-- Theme style -->
+    <link href="/Content/style.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .mycenter {
+            margin-top: 100px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            width: 500px;
+            padding: 5%;
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+
+            .mycenter mysign {
+                width: 440px;
+            }
+
+            .mycenter input, checkbox, button {
+                margin-top: 2%;
+                margin-left: 10%;
+                margin-right: 10%;
+            }
+
+        .mycheckbox {
+            margin-top: 10px;
+            margin-left: 40px;
+            margin-bottom: 10px;
+            height: 10px;
+        }
+    </style>
+    <script src="/js/jquery.min.js" type="text/javascript"></script>
+    <!-- jQuery UI 1.10.3 -->
+    <script src="/js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
+    <!-- Bootstrap -->
+    <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+    <!-- daterangepicker -->
+    <script src="/js/plugins/daterangepicker/daterangepicker.js" type="text/javascript"></script>
+
+    <script src="/js/plugins/chart.js" type="text/javascript"></script>
+
+    <!-- datepicker
+    <script src="js/plugins/datepicker/bootstrap-datepicker.js" type="text/javascript"></script>-->
+    <!-- Bootstrap WYSIHTML5
+    <script src="js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>-->
+    <!-- iCheck -->
+    <script src="/js/plugins/iCheck/icheck.min.js" type="text/javascript"></script>
+    <!-- calendar -->
+    <!-- Director App -->
+    <script src="/js/Director/app.js" type="text/javascript"></script>
+
+    <!-- Director dashboard demo (This is only for demo purposes) -->
+    <script src="/js/Director/dashboard.js" type="text/javascript"></script>
+    <script src="/js/bootstrap-table.js"></script>
+    <script src="/js/bootstrap-table-zh-CN.js"></script>
+    <link href="/Content/bootstrap-table.css" rel="stylesheet">
+    <script>
+    $(document).ready(function () {
+        $('.btn').click(function () {
+            var Name = $(".name").val();
+            var Password = $(".password").val();
+            if (Name === undefined || Name === '' || Password === undefined || Password === '') {
+                alert("请输入账号密码！！");
+                return;
+            }
+            var loginBtn = this;
+            $.ajax({
+                url: '/Main/Mylogin',
+                data: { UserName: Name, PassWord: Password },
+                type: 'post',
+                beforeSend: function () {
+                    //3.让提交按钮失效，以实现防止按钮重复点击
+                    $(loginBtn).attr('disabled', 'disabled');
+                    //4.给用户提供友好状态提示
+                    $(loginBtn).text('登录中...');
+                },
+                complete: function () {
+                    //5.让登陆按钮重新有效
+                    $(loginBtn).removeAttr('disabled');
+                    $(loginBtn).text('登录');
+                },
+                success: function (msg) {
+                    var m = JSON.parse(msg);
+                    if (m.code==="0") {
+
+                        window.location.href = "/Main/Index";
+                        //TODO 其他操作...
+                    } else {
+                        alert('登录失败，请重新登录！');
+                    }
+
+                }
+            });
+        })
+    })
+
+    </script>
+</head>
+
+<body>
+    <form action="" method="post">
+        <div class="mycenter">
+            <div class="mysign">
+                <div class="col-lg-11 text-center text-info">
+                    <h2>后台登录界面</h2>
+                </div>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control name" name="username" placeholder="请输入账户名" required autofocus />
+                </div>
+                <div class="col-lg-10"></div>
+                <div class="col-lg-10">
+                    <input type="password" class="form-control password" name="password" placeholder="请输入密码" required autofocus />
+                </div>
+                <div class="col-lg-10"></div>
+                <div class="col-lg-10 mycheckbox checkbox">
+                    <input type="checkbox" class="col-lg-1">记住密码</input>
+                </div>
+                <div class="col-lg-10"></div>
+                <div class="col-lg-10">
+                    <button type="button" class="btn btn-success col-lg-12">登录</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

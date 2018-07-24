@@ -1,0 +1,124 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            padding: 30px;
+        }
+
+        form {
+            display: block;
+            margin: 20px auto;
+            background: #eee;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .progress {
+            position: relative;
+            width: 400px;
+            border: 1px solid #ddd;
+            padding: 1px;
+            border-radius: 3px;
+        }
+
+        .bar {
+            background-color: #B4F5B4;
+            width: 0%;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .percent {
+            position: absolute;
+            display: inline-block;
+            top: 3px;
+            left: 48%;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width" />
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.form.js"></script>   <!--ajaxForm 依赖脚本-->
+    <title>Index</title>
+    <script>
+        $(function () {
+            var bar = $('.bar');
+            var percent = $('.percent');
+            var status = $('#status');
+            $('form').ajaxForm({
+                beforeSerialize: function () {
+                    //alert("表单数据序列化前执行的操作！");
+                    //$("#txt2").val("java");//如：改变元素的值
+                },
+                beforeSubmit: function () {
+                    //alert("表单提交前的操作");
+                    var filesize = $("input[type='file']")[0].files[0].size / 1024 / 1024;
+                    var fileType = $("input[type='file']")[0].files[0].type;
+                    if (fileType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                        if (0 == filesize || filesize > 50) {
+                            alert("请上传25M以内的文件！！");
+                            return false;
+                        }
+                    } else {
+                        alert("请上传模板文件格式！！");
+                        return false;
+                    }
+                    //if($("#txt1").val()==""){return false;}//如：验证表单数据是否为空
+                },
+                beforeSend: function () {
+                    status.empty();
+                    var percentVal = '0%';
+                    bar.width(percentVal)
+                    percent.html(percentVal);
+                },
+                uploadProgress: function (event, position, total, percentComplete) {//上传的过程
+                    //position 已上传了多少
+                    //total 总大小
+                    //已上传的百分数
+                    var percentVal = percentComplete + '%';
+                    bar.width(percentVal)
+                    percent.html(percentVal);
+                    //console.log(percentVal, position, total);
+                },
+                success: function (data) {//成功
+                    var percentVal = '100%';
+                    bar.width(percentVal)
+                    percent.html(percentVal);
+                    alert(data);
+                },
+                error: function (err) {//失败
+                    alert("表单提交异常！" + err.msg);
+                },
+                complete: function (xhr) {//完成
+                    status.html(xhr.responseText);
+                }
+            });
+
+        });
+    </script>
+</head>
+<body>
+    
+    <div> 
+        <a href="/Main/TestGet" title="下载增量更新成员模版">下载增量更新成员模版</a>
+        <form id="uploadTaskForm" enctype="multipart/form-data" method="post" action="/Main/GetTest">
+            <input type="file" name="taskFile" class="form-control" id="taskFile" />
+            <input type="submit" value="上传文件">
+        </form>
+        <div class="progress">
+            <div class="bar"></div>
+            <div class="percent">0%</div>
+        </div>
+
+        <div id="status"></div>
+
+    </div>
+    <iframe src="~/folder.html"></iframe>
+</body>
+</html>

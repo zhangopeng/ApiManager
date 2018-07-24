@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+	<meta charset="utf-8" />
+    <link rel="stylesheet" href="/Content/bootstrap.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id='modal_message' style="text-align: center"><h2>正在查询中.....</h2></div>
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60"
+                             aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                            <span class="sr-only">100% 完成</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <script type="text/javascript">
+    $("#searchModal").modal("show");//显示“正在查询”字样的模态框
+    htmlobj = $.ajax({
+        url:"/Main/GetTest",
+        type : 'POST',
+        data : { "number" : "123",
+                },
+        dataType : "text",
+        //contentType : 'application/x-www-form-urlencoded',
+        async : true,
+        success : function(mydata) {
+                $('#searchModal').modal('hide');//服务器停止了5秒,sleep(5)，假设是查询数据用了5秒
+                //setTimeout("$('#searchModal').modal('hide')",2000); //设置2000毫秒之后模态框消失
+                $('#searchModal').on('hidden.bs.modal', function () {
+    //                            // 执行一些动作...
+                    $("#homeworkContent").html(mydata); //显示后端传递的结果
+                  });
+        },
+        error : function() {
+                alert("calc failed");
+        }
+});
+    </script>
+</body>
+</html>
